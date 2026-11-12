@@ -15,12 +15,12 @@ export default async function handler(req, res) {
 
   const token = process.env.FONNTE_TOKEN;
   if (!token) {
-    return res.status(500).json({ error: 'FONNTE_TOKEN belum diset di Vercel (Cek Environment Variables)' });
+    return res.status(500).json({ error: 'FONNTE_TOKEN belum diset di Vercel' });
   }
 
   const { target, message, jumlah = 1, delay = 2, linkGrup } = req.body || {};
 
-  // Validasi Target (Nomor atau Grup)
+  // Validasi Target
   const isGroup = target.includes('@g.us');
   const isPhone = /^\d{8,15}$/.test(target);
 
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
   let autoJoinStatus = null;
 
   // ==========================================
-  // PROSES AUTO JOIN GRUP (Jika link diisi)
+  // PROSES AUTO JOIN GRUP
   // ==========================================
   if (linkGrup && linkGrup.trim() !== '') {
     try {
@@ -49,13 +49,14 @@ export default async function handler(req, res) {
         kodeUndangan = kodeUndangan.split('chat.whatsapp.com/')[1].split('?')[0];
       }
 
+      // Gunakan FormData untuk join-group
+      const joinForm = new FormData();
+      joinForm.append('code', kodeUndangan);
+
       const joinRes = await fetch('https://api.fonnte.com/join-group', {
         method: 'POST',
-        headers: {
-          'Authorization': token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: kodeUndangan }),
+        headers: { 'Authorization': token },
+        body: joinForm,
       });
       
       const joinData = await joinRes.json();
@@ -66,7 +67,7 @@ export default async function handler(req, res) {
   }
 
   // ==========================================
-  // PROSES KIRIM PESAN
+  // PROSES KIRIM PESAN (MENGGUNAKAN FORMDATA)
   // ==========================================
   let terkirim = 0;
   let gagal = 0;
@@ -74,17 +75,19 @@ export default async function handler(req, res) {
 
   for (let i = 1; i <= n; i++) {
     try {
+      // Fonnte lebih stabil menerima FormData dibanding JSON mentah
+      const formData = new FormData();
+      formData.append('target', target);
+      formData.append('message', message);
+      formData.append('delay', String(delaySec));
+
       const r = await fetch('https://api.fonnte.com/send', {
         method: 'POST',
         headers: {
           'Authorization': token,
-          'Content-Type': 'application/json',
+          // JANGAN set Content-Type, biarkan fetch yang mengatur boundary FormData
         },
-        body: JSON.stringify({
-          target: target,
-          message: message,
-          delay: delaySec,
-        }),
+        body: formData,
       });
 
       const data = await r.json();
@@ -93,7 +96,6 @@ export default async function handler(req, res) {
         terkirim++;
       } else {
         gagal++;
-        // MENAMPILKAN ALASAN ASLI DARI FONNTE
         errors.push(data.reason || data.detail || JSON.stringify(data));
       }
     } catch (e) {
@@ -111,8 +113,7 @@ export default async function handler(req, res) {
     gagal,
     target,
     autoJoin: autoJoinStatus,
-    // Tampilkan error pertama yang terjadi, jika ada
-    error: gagal > 0 ? errors[0] : null, 
+    error: gagal > 0 ? errors[0] : null,
     errors: errors.slice(0, 5),
   });
 }
