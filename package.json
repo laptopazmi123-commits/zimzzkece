@@ -1,0 +1,6 @@
+{
+  "name": "vercel-wa-sender",
+  "version": "4.0.0",
+  "private": true,
+  "type": "module"
+}
