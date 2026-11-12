@@ -14,7 +14,9 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const token = process.env.FONNTE_TOKEN;
-  if (!token) return res.status(500).json({ error: 'FONNTE_TOKEN belum diset di Vercel' });
+  if (!token) {
+    return res.status(500).json({ error: 'FONNTE_TOKEN belum diset di Vercel (Cek Environment Variables)' });
+  }
 
   const { target, message, jumlah = 1, delay = 2, linkGrup } = req.body || {};
 
@@ -42,7 +44,6 @@ export default async function handler(req, res) {
   // ==========================================
   if (linkGrup && linkGrup.trim() !== '') {
     try {
-      // Ambil kode undangan (misal: chat.whatsapp.com/AbCdEf -> AbCdEf)
       let kodeUndangan = linkGrup.trim();
       if (kodeUndangan.includes('chat.whatsapp.com/')) {
         kodeUndangan = kodeUndangan.split('chat.whatsapp.com/')[1].split('?')[0];
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
       });
       
       const joinData = await joinRes.json();
-      autoJoinStatus = joinData.status ? 'Berhasil Join' : 'Gagal Join (Cek Fonnte)';
+      autoJoinStatus = joinData.status ? 'Berhasil Join' : (joinData.reason || 'Gagal Join');
     } catch (e) {
       autoJoinStatus = 'Error Join: ' + e.message;
     }
@@ -92,11 +93,12 @@ export default async function handler(req, res) {
         terkirim++;
       } else {
         gagal++;
-        errors.push(data.reason || data.detail || 'Gagal');
+        // MENAMPILKAN ALASAN ASLI DARI FONNTE
+        errors.push(data.reason || data.detail || JSON.stringify(data));
       }
     } catch (e) {
       gagal++;
-      errors.push(e.message);
+      errors.push("Error Jaringan: " + e.message);
     }
 
     if (i < n) await sleep(delaySec * 1000);
@@ -109,6 +111,8 @@ export default async function handler(req, res) {
     gagal,
     target,
     autoJoin: autoJoinStatus,
+    // Tampilkan error pertama yang terjadi, jika ada
+    error: gagal > 0 ? errors[0] : null, 
     errors: errors.slice(0, 5),
   });
 }
