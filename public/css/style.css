@@ -1,0 +1,57 @@
+:root {
+  --bg: #0b141a; --surface: #111b21; --surface-2: #1f2c33; --border: #2a3942;
+  --text: #e9edef; --text-muted: #8696a0; --green: #25d366; --green-dark: #1da851;
+  --red: #f15c6d; --radius: 10px; --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; line-height: 1.5;
+}
+
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); width: 100%; max-width: 480px; padding: 24px;
+}
+
+.card-header { margin-bottom: 20px; text-align: center; }
+.card-header h1 { font-size: 1.35rem; color: var(--green); margin-bottom: 4px; }
+.subtitle { font-size: 0.82rem; color: var(--text-muted); }
+
+.form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+.field small { font-size: 0.72rem; color: var(--text-muted); }
+
+.field input, .field textarea {
+  width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text); font-size: 0.95rem; font-family: inherit; outline: none;
+}
+.field input:focus, .field textarea:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.15); }
+.field textarea { resize: vertical; min-height: 70px; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.btn-primary {
+  padding: 12px; border: none; border-radius: 8px; background: var(--green); color: #fff;
+  font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+}
+.btn-primary:hover:not(:disabled) { background: var(--green-dark); }
+.btn-primary:disabled { background: #3a4a52; cursor: not-allowed; }
+
+.btn-primary .count-badge {
+  display: inline-block; background: rgba(0, 0, 0, 0.25); padding: 1px 8px; border-radius: 999px; font-size: 0.8em; margin-left: 6px;
+}
+
+.status {
+  margin-top: 16px; font-size: 0.85rem; padding: 10px 12px; border-radius: 8px;
+  display: none; border: 1px solid transparent; word-break: break-word;
+}
+.status.visible { display: block; }
+.status.ok { color: var(--green); border-color: rgba(37,211,102,0.3); background: rgba(37,211,102,0.08); }
+.status.err { color: var(--red); border-color: rgba(241,92,109,0.3); background: rgba(241,92,109,0.08); }
+.status.loading { color: var(--text-muted); border-color: var(--border); background: var(--surface-2); }
+
+.card-footer { margin-top: 20px; text-align: center; color: var(--text-muted); font-size: 0.72rem; }
