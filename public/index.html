@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kirim WA Otomatis</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    #loginScreen { display: none; } 
+    #appScreen { display: none; }   
+    .owner-info {
+      margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); 
+      background: var(--surface-2); padding: 5px; border-radius: 5px;
+    }
+    .btn-logout { color: var(--red); text-decoration: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <!-- ================= LAYAR LOGIN ================= -->
+  <div id="loginScreen" class="card">
+    <header class="card-header">
+      <h1>🔒 Login Owner</h1>
+      <p class="subtitle">Sistem Tertutup</p>
+    </header>
+    <form id="loginForm" class="form">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" type="text" placeholder="Masukkan nama" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Masukkan password" required>
+      </div>
+      <button type="submit" class="btn-primary">Masuk Sistem</button>
+    </form>
+    <div id="loginStatus" class="status" style="margin-top: 15px;"></div>
+  </div>
+
+  <!-- ================= LAYAR UTAMA ================= -->
+  <main id="appScreen" class="card">
+    <header class="card-header">
+      <h1>📤 Kirim WA Otomatis</h1>
+      <p class="subtitle">Teks · Grup · via Fonnte</p>
+      
+      <div class="owner-info">
+        Login sebagai: <b id="ownerName">zimzz</b> (Pencipta)<br>
+        <a href="#" onclick="logout()" class="btn-logout">Logout 🚪</a>
+      </div>
+    </header>
+
+    <form id="form" class="form" autocomplete="off">
+      
+      <!-- FITUR AUTO JOIN GRUP -->
+      <div class="field">
+        <label for="linkGrup">Link Undangan Grup (Opsional)</label>
+        <input id="linkGrup" name="linkGrup" type="url" placeholder="https://chat.whatsapp.com/AbCdEf123...">
+        <small>Isi jika ingin bot auto-join sebelum mengirim pesan.</small>
+      </div>
+
+      <div class="field">
+        <label for="target">Nomor Tujuan / ID Grup</label>
+        <input id="target" name="target" type="text" placeholder="6281234567890 atau 123456@g.us" value="62">
+        <small>Format nomor: 62xxx. Format grup: berakhiran @g.us</small>
+      </div>
+
+      <div class="field">
+        <label for="message">Pesan</label>
+        <textarea id="message" name="message" rows="4" placeholder="Tulis pesan...">Halo, ini pesan otomatis</textarea>
+        <small><span id="charCount">0</span> karakter</small>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="jumlah">Kirim Berapa Kali</label>
+          <input id="jumlah" name="jumlah" type="number" min="1" max="50" value="1">
+          <small>1–50x</small>
+        </div>
+        <div class="field">
+          <label for="delay">Delay (detik)</label>
+          <input id="delay" name="delay" type="number" min="1" max="60" value="2">
+          <small>antar kiriman</small>
+        </div>
+      </div>
+
+      <button id="btn" type="submit" class="btn-primary">🚀 Kirim Sekarang</button>
+    </form>
+
+    <div id="status" class="status"></div>
+
+    <footer class="card-footer">
+      <small>Powered by Fonnte · Deploy di Vercel</small>
+    </footer>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
